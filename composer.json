@@ -1,0 +1,24 @@
+{
+    "name": "easydowork/swoole-crontab",
+    "description": "基于 swoole 的定时任务服务",
+    "keywords": ["swoole", "crontab"],
+    "type": "package",
+    "authors": [
+        {
+            "name": "easydowork",
+            "email": "254364502@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "swoole": "^4.5"
+    },
+    "require-dev": {
+        "swoole/ide-helper": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "easydowork\\crontab\\": "src/"
+        }
+    }
+}
