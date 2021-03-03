@@ -1,6 +1,8 @@
 <?php
-namespace easydowork\crontab;
+namespace easydowork\crontab\server;
 
+use easydowork\crontab\controller\Controller;
+use easydowork\crontab\job\JobProcess;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;
@@ -26,13 +28,15 @@ class Http
     public function __construct($config=[])
     {
 
-        $defaultConfig = require __DIR__.'/Config.php';
+        $defaultConfig = require dirname(__DIR__).'/Config.php';
 
         $this->_config = array_merge($defaultConfig,$config);
 
         $this->_server = new Server($this->_config['host'], $this->_config['port'],SWOOLE_PROCESS,$this->_config['sock_type']);
 
         $this->_server->set($this->_config['set']);
+
+        $this->_server->addProcess((new JobProcess($this->_server,$this->_config))->getProcess());
 
         $this->_server->on('request', [$this, 'onRequest']);
 
@@ -42,7 +46,6 @@ class Http
      * onRequest
      * @param Request $request
      * @param Response $response
-     * @return mixed
      */
     public function onRequest(Request $request, Response $response)
     {
@@ -64,9 +67,22 @@ class Http
                     'message' => 'action not exist!'
                 ]));
             }else{
-                list($controller,$action) = $this->_config['route'][$url];
-                $data = (new $controller($request, $response))->{$action}();
-                $response->end(json_encode($data));
+                try {
+                    [$controller,$action] = $this->_config['route'][$url];
+                    $class = (new $controller($request, $response));
+                    if(!($class instanceof Controller)){
+                        throw new \Exception(500,$class.' must be extends '.Controller::class);
+                    }
+                    $data = $class->{$action}();
+                    $response->status(200);
+                    $response->end(json_encode($data));
+                }catch (\Throwable $e){
+                    $response->status(500);
+                    $response->end(json_encode([
+                        'code' => $e->getCode(),
+                        'message' => $e->getMessage()
+                    ]));
+                }
             }
         }
     }

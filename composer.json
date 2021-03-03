@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=7.1",
-        "swoole": "^4.5"
+        "swoole": "^4.5",
+        "ext-json": "*"
     },
     "require-dev": {
         "swoole/ide-helper": "*"
