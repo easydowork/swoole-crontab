@@ -1,15 +1,16 @@
 <?php
 namespace easydowork\crontab\job;
 
+use easydowork\crontab\execute\JobFacade;
+use easydowork\crontab\Config;
+use Swoole\Coroutine;
 use Swoole\Process;
 use Swoole\Http\Server;
-use Swoole\Table;
 
 /**
  * Class JobProcess
  * @package easydowork\crontab\job
  * @property Server $_server
- * @property array $_config
  * @property string $_jobDataFile
  */
 class JobProcess
@@ -21,11 +22,6 @@ class JobProcess
     protected $_server;
 
     /**
-     * @var array
-     */
-    protected $_config;
-
-    /**
      * @var string
      */
     protected $_jobDataFile;
@@ -33,13 +29,11 @@ class JobProcess
     /**
      * JobProcess constructor.
      * @param Server $server
-     * @param array $config
      */
-    public function __construct(Server $server,$config=[])
+    public function __construct(Server $server)
     {
         $this->_server = $server;
-        $this->_config = $config;
-        $this->_jobDataFile = $this->_config['job']['dataFile']??'';
+        $this->_jobDataFile = Config::getInstance()->jobConfig['data_file'];
         $this->initTable();
     }
 
@@ -49,18 +43,23 @@ class JobProcess
     protected function initTable()
     {
         try {
-            $jobTable = JobTable::getInstance((int)$this->_config['job']['tableSize']??1024);
+            touch($this->_jobDataFile);
+
+            if(!is_writable($this->_jobDataFile)){
+                throw new \Exception('data_file is not writable.');
+            }
+
+            $jobTable = JobTable::getInstance(Config::getInstance()->jobConfig['table_size']);
             $data = @unserialize(@file_get_contents($this->_jobDataFile));
             if(!empty($data)){
                 foreach ($data as $key => $value){
                     $jobTable->set($key,$value);
                 }
             }
-            FlagTable::getInstance()->setFlag(false);
+            FlagTable::getInstance()->setFlag(true);
         }catch (\Exception $e){
-            //TODO logo
-        } finally {
-            touch($this->_jobDataFile);
+            print_ln($e->getMessage());
+            exit();
         }
     }
 
@@ -70,20 +69,28 @@ class JobProcess
      */
     public function getProcess()
     {
-        return new Process(function () {
+        $process = new Process(function () {
+            $i=1;
             while(true){
-                if (FlagTable::$_instance->getFlag()){
-                    $jobTable = JobTable::getInstance();
-                    $data = [];
-                    foreach ($jobTable->getTable() as $key =>$value){
-                        $data[$key] = $value;
+                print_r($i++);
+                $data = [];
+                foreach (JobTable::getInstance()->getTable() as $key =>$value){
+                    if($value['status']){
+                        JobFacade::getExecute($key,$value);
                     }
-                    if(is_writable($this->_jobDataFile))
-                        file_put_contents($this->_jobDataFile,serialize($data));
-                    FlagTable::$_instance->setFlag(false);
+                    $data[$key] = $value;
                 }
-            };
+                if (FlagTable::getInstance()->getFlag()){
+                    file_put_contents($this->_jobDataFile,serialize($data));
+                    FlagTable::getInstance()->setFlag(false);
+                }
+                Coroutine::sleep(60);
+            }
         }, false, 2, true);
+
+        $process->name('SwooleCrontabProcess');
+
+        return $process;
     }
 
 }

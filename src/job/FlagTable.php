@@ -1,6 +1,7 @@
 <?php
 namespace easydowork\crontab\job;
 
+use easydowork\crontab\base\Instance;
 use Swoole\Table;
 
 /**
@@ -10,34 +11,21 @@ use Swoole\Table;
  */
 class FlagTable
 {
+    use Instance;
+
     /**
      * @var Table
      */
-    protected $_table;
+    private $_table;
 
     /**
-     * @var static
+     * FlagTable constructor.
      */
-    public static $_instance;
-
     private function __construct()
     {
         $this->_table = new Table(1);
         $this->_table->column('flag', Table::TYPE_INT, 1);
         $this->_table->create();
-    }
-
-    /**
-     * getInstance
-     * @return static
-     */
-    public static function getInstance()
-    {
-        if(empty(self::$_instance)){
-            self::$_instance = new static();
-        }
-
-        return self::$_instance;
     }
 
     /**

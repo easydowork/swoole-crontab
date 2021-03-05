@@ -1,5 +1,5 @@
 <?php
-namespace easydowork\crontab\server;
+namespace easydowork\crontab;
 
 use easydowork\crontab\controller\Controller;
 use easydowork\crontab\job\JobProcess;
@@ -8,12 +8,12 @@ use Swoole\Http\Response;
 use Swoole\Http\Server;
 
 /**
- * Class Http
- * @package easydowork
+ * Class HttpServer
+ * @package easydowork\crontab\server
  * @property-read Server $_server
- * @property-read array $_config
+ * @property-read Config $_config
  */
-class Http
+class HttpServer
 {
     /**
      * @var Server
@@ -21,25 +21,59 @@ class Http
     protected $_server;
 
     /**
-     * @var array
+     * @var Config
      */
     protected $_config;
 
-    public function __construct($config=[])
+    /**
+     * HttpServer constructor.
+     * @param array $config
+     */
+    public function __construct(array $config=[])
     {
 
-        $defaultConfig = require dirname(__DIR__).'/Config.php';
+        $this->initConfig($config);
 
-        $this->_config = array_merge($defaultConfig,$config);
+        $this->_server = new Server($this->_config->host, $this->_config->port,SWOOLE_PROCESS,$this->_config->sock_type);
 
-        $this->_server = new Server($this->_config['host'], $this->_config['port'],SWOOLE_PROCESS,$this->_config['sock_type']);
+        $this->_server->set($this->_config->settings);
 
-        $this->_server->set($this->_config['set']);
+        $this->_server->addProcess((new JobProcess($this->_server))->getProcess());
 
-        $this->_server->addProcess((new JobProcess($this->_server,$this->_config))->getProcess());
+        $this->_server->on('Start', [$this, 'onStart']);
+
+        $this->_server->on('WorkerStart', [$this, 'onWorkerStart']);
 
         $this->_server->on('request', [$this, 'onRequest']);
 
+    }
+
+    /**
+     * initConfig
+     * @param array $config
+     */
+    protected function initConfig($config=[])
+    {
+        $this->_config = Config::getInstance($config);
+    }
+
+    /**
+     * onStart
+     * @param Server $server
+     */
+    public function onStart(Server $server)
+    {
+        swoole_set_process_name('SwooleCrontabServer');
+    }
+
+    /**
+     * onWorkerStart
+     * @param Server $server
+     * @param int $worker_id
+     */
+    public function onWorkerStart(Server $server, int $worker_id)
+    {
+        swoole_set_process_name('SwooleCrontabWork_'.$worker_id);
     }
 
     /**
@@ -60,15 +94,15 @@ class Http
         }else{
             $url = trim($request->server['request_uri'] ?? '/', '/');
 
-            if(empty($this->_config['route'][$url])){
+            if(empty($this->_config->routes[$url])){
                 $response->status(404);
                 $response->end(json_encode([
                     'code' => 404,
-                    'message' => 'action not exist!'
+                    'message' => 'action not exist.'
                 ]));
             }else{
                 try {
-                    [$controller,$action] = $this->_config['route'][$url];
+                    [$controller,$action] = $this->_config->routes[$url];
                     $class = (new $controller($request, $response));
                     if(!($class instanceof Controller)){
                         throw new \Exception(500,$class.' must be extends '.Controller::class);
@@ -80,7 +114,7 @@ class Http
                     $response->status(500);
                     $response->end(json_encode([
                         'code' => $e->getCode(),
-                        'message' => $e->getMessage()
+                        'message' => $e->getMessage(),
                     ]));
                 }
             }
@@ -94,15 +128,6 @@ class Http
     public function getServer()
     {
         return $this->_server;
-    }
-
-    /**
-     * getConfig
-     * @return array
-     */
-    public function getConfig()
-    {
-        return $this->_config;
     }
 
     /**
@@ -120,6 +145,7 @@ class Http
      */
     public function start()
     {
+        print_success('Swoole Crontab is Running.');
         $this->_server->start();
     }
 

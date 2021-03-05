@@ -57,12 +57,12 @@ abstract class Controller
 
     /**
      * error
+     * @param string $message
      * @param array $data
      * @param int $code
-     * @param string $message
      * @return array
      */
-    public function error($data=[],$code=1,$message='操作失败.')
+    public function error($message='操作失败.',$data=[],$code=1)
     {
         return $this->send($code,$message,$data);
     }
@@ -88,13 +88,17 @@ abstract class Controller
         return $returnData;
     }
 
-    abstract public function get():array;
+    abstract public function find():array;
 
-    abstract public function set():array;
+    abstract public function create():array;
 
     abstract public function all():array;
 
-    abstract public function del():array;
+    abstract public function delete():array;
+
+    abstract public function start():array;
+
+    abstract public function stop():array;
 
     abstract public function count():array;
 

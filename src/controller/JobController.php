@@ -24,27 +24,35 @@ class JobController extends Controller
     }
 
     /**
-     * get
+     * find
      * @return array
      */
-    public function get(): array
+    public function find(): array
     {
         $id = (string)($this->request->post['id'] ?? 0);
         if (!empty($data = $this->jobTable->get($id))) {
             return $this->success($data);
         }
-        return $this->error();
+        return $this->error('定时任务('.$id.'):不存在.');
     }
 
     /**
-     * set
+     * create
      * @return array
      */
-    public function set(): array
+    public function create(): array
     {
         $data = $this->request->post;
+
+        $res = $this->jobTable->checkData($data);
+
+        if(is_string($res))
+            return $this->error($res);
+
         $id = uniqid();
-        if ($this->jobTable->set(uniqid(), $data)) {
+        //默认执行
+        $data['status'] = 1;
+        if ($this->jobTable->set($id, $data)) {
             return $this->success([
                 'id' => $id,
             ]);
@@ -52,20 +60,24 @@ class JobController extends Controller
         return $this->error();
     }
 
+    /**
+     * all
+     * @return array
+     */
     public function all(): array
     {
-        $dataList = [];
+        $jobList = [];
         foreach ($this->jobTable->getTable() as $key => $value) {
-            $dataList[$key] = $value;
+            $jobList[$key] = $value;
         }
-        return $this->success($dataList);
+        return $this->success(['job_list'=>$jobList]);
     }
 
     /**
-     * del
+     * delete
      * @return array
      */
-    public function del(): array
+    public function delete(): array
     {
         $id = (string)($this->request->post['id'] ?? 0);
         if ($this->jobTable->del($id)) {
@@ -74,10 +86,44 @@ class JobController extends Controller
         return $this->error();
     }
 
+    /**
+     * count
+     * @return array
+     */
     public function count(): array
     {
         return $this->success([
             'count' => $this->jobTable->count(),
         ]);
+    }
+
+    /**
+     * stop
+     * @return array
+     */
+    public function start(): array
+    {
+        $id = (string)($this->request->post['id'] ?? 0);
+        if(!empty($data = $this->jobTable->get($id))){
+            if($data['status'] || $this->jobTable->start($id,$data)){
+                return $this->success();
+            }
+        }
+        return $this->error();
+    }
+
+    /**
+     * stop
+     * @return array
+     */
+    public function stop(): array
+    {
+        $id = (string)($this->request->post['id'] ?? 0);
+        if(!empty($data = $this->jobTable->get($id))){
+            if(!$data['status'] || $this->jobTable->stop($id,$data)){
+                return $this->success();
+            }
+        }
+        return $this->error();
     }
 }
