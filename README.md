@@ -5,7 +5,8 @@
 ## 安装说明  
 * 详见 `composer.json` `require`
 
-## 运行说明  
+## 运行说明 
+* 启动`server`时,添加用户进程`Process`加载`data_file`配置文件到`Swool\Table`中,`worker`进程接收请求,用户进程每分钟扫描一次`data_file`配置文件解析定时任务.创建|删除|更新|启动|关闭定时任务请求会实时更新`data_file`配置文件内容,并且修改`Swool\Table`内容.
 * 复制项目根目录`test`文件中`Crontab.php`
 * 服务启动默认配置为项目下`Config.php`
 * 注意修改引入的`vendor/autoload.php`文件路径
@@ -22,7 +23,7 @@ php Crontab sttop #关闭常驻内存服务
     ```json
     //请求字段
     {
-        "name": "url",    // 任务名称
+        "name": "url",    /* 任务名称 */
         "start_time": 0,  // 开始时间默认0解析format格式直接运行
         "stop_time": 0,   // 结束时间默认0一直运行
         "format": "* * * * * *",  // 执行时间格式参见Crontab基本格式再加上一个秒
