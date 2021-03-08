@@ -66,10 +66,7 @@ class JobController extends Controller
      */
     public function all(): array
     {
-        $jobList = [];
-        foreach ($this->jobTable->getTable() as $key => $value) {
-            $jobList[$key] = $value;
-        }
+        $jobList = $this->jobTable->each();
         return $this->success(['job_list'=>$jobList]);
     }
 

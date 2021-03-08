@@ -39,12 +39,20 @@ class JobTable
     }
 
     /**
-     * getTable
-     * @return Table
+     * each
+     * @param null $callBack
+     * @return mixed
      */
-    public function getTable()
+    public function each($callBack=null)
     {
-        return $this->_table;
+        $data = [];
+        foreach ($this->_table as $key =>$value){
+            if(is_callable($callBack)){
+                $callBack($key,$value);
+            }
+            $data[$key] = $value;
+        }
+        return $data;
     }
 
     /**
@@ -65,11 +73,19 @@ class JobTable
      */
     public function set($key,$data=[])
     {
-        $res = $this->_table->set($key,$data);
-        if($res){
-            FlagTable::getInstance()->setFlag(true);
+        if($this->_table->set($key,$data)){
+            return $this->saveToFile();
         }
-        return $res;
+        return false;
+    }
+
+    /**
+     * saveToFile
+     * @return false|int
+     */
+    protected function saveToFile()
+    {
+        return @file_put_contents(Config::getInstance()->jobConfig['data_file'],serialize($this->each()));
     }
 
     /**
@@ -103,11 +119,10 @@ class JobTable
      */
     public function del($key)
     {
-        $res = $this->_table->del($key);
-        if($res){
-            FlagTable::getInstance()->setFlag(true);
+        if($this->_table->del($key)){
+            return $this->saveToFile();
         }
-        return $res;
+        return false;
     }
 
     /**

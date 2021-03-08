@@ -19,7 +19,7 @@ class JobFacade
      * @param $key
      * @param $data
      */
-    public static function getExecute($key,&$data)
+    public static function getExecute($key,$data)
     {
         //判断是否为关闭状态
         if(empty($data['status'])) {
@@ -33,6 +33,8 @@ class JobFacade
 
         //判断执行结束时间
         if($data['stop_time'] && $data['stop_time'] < time()){
+            $data['status'] = 0;
+            JobTable::getInstance()->set($key,$data);
             return;
         }
 
@@ -55,6 +57,7 @@ class JobFacade
                 return;
         }catch (\Exception $e){
             $data['status'] = 0;
+            JobTable::getInstance()->set($key,$data);
             Logger::getInstance()->info('执行定时任务['.$data['name'].'],解析[format]失败.');
             return;
         }
