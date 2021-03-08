@@ -157,9 +157,7 @@ class JobTable
         if(empty($runTypes[$data['run_type']]))
             return '任务类型错误,必须为:'.implode(',',$runTypes).'其中之一.';
 
-        try {
-            FormatParser::getInstance()->parse($data['format']??'');
-        }catch (\Exception $e){
+        if(!FormatParser::getInstance()->isValid($data['format']??'')){
             return 'crontab格式错误.';
         }
 
