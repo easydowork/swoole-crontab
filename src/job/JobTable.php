@@ -4,6 +4,7 @@ namespace easydowork\crontab\job;
 use easydowork\crontab\base\Instance;
 use easydowork\crontab\Config;
 use easydowork\crontab\execute\FormatParser;
+use easydowork\crontab\execute\JobExecute;
 use Swoole\Table;
 
 /**
@@ -153,9 +154,14 @@ class JobTable
             return '任务类型不能为空.';
 
         $runTypes = Config::getInstance()->jobConfig['run_types'];
-
-        if(empty($runTypes[$data['run_type']]))
+        $executeClass = $runTypes[$data['run_type']]??null;
+        if(empty($executeClass) || !($executeClass instanceof JobExecute)){
             return '任务类型错误,必须为:'.implode(',',$runTypes).'其中之一.';
+        }
+        if($executeClass::validate($data['command'])){
+            return "类型为{$data['run_type']}时,command格式错误.";
+        }
+
 
         if(!FormatParser::getInstance()->isValid($data['format']??'')){
             return 'crontab格式错误.';

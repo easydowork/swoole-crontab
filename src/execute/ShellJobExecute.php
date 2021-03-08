@@ -17,7 +17,7 @@ class ShellJobExecute extends JobExecute
      * @param array $data
      * @return bool
      */
-    public function run(array $data)
+    public function run(array $data):bool
     {
         $res = System::exec($data['command']);
         return !$res?false:true;

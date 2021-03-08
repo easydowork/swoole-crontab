@@ -14,7 +14,7 @@ class UrlJobExecute extends JobExecute
      * @param array $data
      * @return bool
      */
-    public function run(array $data)
+    public function run(array $data):bool
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $data['command']);
@@ -29,5 +29,16 @@ class UrlJobExecute extends JobExecute
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); //返回状态码
         curl_close($ch);
         return $httpCode==200;
+    }
+
+    /**
+     * validate
+     * @param string $command
+     * @return bool
+     */
+    public static function validate(string $command):bool
+    {
+        $preg = '/^(http|https):\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\’:+!]*([^<>\”])*$/';
+        return preg_match($preg, $command)?true:false;
     }
 }

@@ -38,7 +38,7 @@ class JobFacade
 
         //判断任务执行文件
         $executeClass = Config::getInstance()->jobConfig['run_types'][$data['run_type']]??'';
-        if(empty($executeClass))
+        if(empty($executeClass) || !($executeClass instanceof JobExecute))
             return;
 
         //获取1分钟内执行的时间戳
