@@ -84,18 +84,15 @@ class HttpServer
     public function onRequest(Request $request, Response $response)
     {
         $response->header('Content-Type', 'application/json; charset=utf-8');
-
+        $response->status(200);
         if($request->server['request_method'] != 'POST'){
-            $response->status(405);
             $response->end(json_encode([
                 'code' => 405,
                 'message' => 'method not allow!'
             ]));
         }else{
             $url = trim($request->server['request_uri'] ?? '/', '/');
-
             if(empty($this->_config->routes[$url])){
-                $response->status(404);
                 $response->end(json_encode([
                     'code' => 404,
                     'message' => 'action not exist.'
@@ -108,12 +105,10 @@ class HttpServer
                         throw new \Exception(500,$class.' must be extends '.Controller::class);
                     }
                     $data = $class->{$action}();
-                    $response->status(200);
                     $response->end(json_encode($data));
                 }catch (\Throwable $e){
-                    $response->status(500);
                     $response->end(json_encode([
-                        'code' => $e->getCode(),
+                        'code' => 500,
                         'message' => $e->getMessage(),
                     ]));
                 }

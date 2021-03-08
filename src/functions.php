@@ -20,7 +20,7 @@ if (! function_exists('print_success')) {
      */
     function print_success($expression)
     {
-        print_ln("\033[0m\033[32m". $expression . "\033[0m" );
+        print_ln("\033[0m\033[32m". print_r($expression,1) . "\033[0m" );
     }
 }
 
@@ -31,6 +31,6 @@ if (! function_exists('print_error')) {
      */
     function print_error($expression)
     {
-        print_ln("\033[0m\033[31m". $expression . "\033[0m" );
+        print_ln("\033[0m\033[31m". print_r($expression,1) . "\033[0m" );
     }
 }

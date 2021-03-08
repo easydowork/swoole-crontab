@@ -70,14 +70,10 @@ class JobProcess
     public function getProcess()
     {
         $process = new Process(function () {
-            $i=1;
             while(true){
-                print_r($i++);
                 $data = [];
                 foreach (JobTable::getInstance()->getTable() as $key =>$value){
-                    if($value['status']){
-                        JobFacade::getExecute($key,$value);
-                    }
+                    JobFacade::getExecute($key,$value);
                     $data[$key] = $value;
                 }
                 if (FlagTable::getInstance()->getFlag()){
