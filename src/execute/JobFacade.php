@@ -61,8 +61,14 @@ class JobFacade
             }
 
             //加入定时任务
-            Timer::after($t*1000,function () use($executeClass,$data){
+            Timer::after($t*1000,function () use($executeClass,$key){
                 try{
+                    /* @var $data array */
+                    $data = JobTable::getInstance()->get($key);
+                    if(empty($data) || empty($data['status'])){
+                        return;
+                    }
+
                     /** @var $execute JobExecute */
                     $execute = new $executeClass();
                     if($execute->run($data) === false){
