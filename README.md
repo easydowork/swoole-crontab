@@ -7,6 +7,7 @@
 
 ## 运行说明  
 * 复制项目根目录`test`文件中`Crontab.php`
+* 服务启动默认配置为项目下`Config.php`
 * 注意修改引入的`vendor/autoload.php`文件路径
 ```sh
 php Crontab start #调试模式
