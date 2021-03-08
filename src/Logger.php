@@ -55,7 +55,7 @@ class Logger
         $date = date('Y-m-d H:i:s');
         $levelStr = $this->levelMap($logLevel);
         $filePath = $this->logPath."/log_{$prefix}.log";
-        $str = "[{$date}][{$category}][{$levelStr}]:[{$msg}]\n";
+        $str = "[{$date}][{$category}][{$levelStr}]:{$msg}\n";
         file_put_contents($filePath,"{$str}",FILE_APPEND|LOCK_EX);
     }
 
