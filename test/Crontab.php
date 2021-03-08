@@ -3,7 +3,7 @@ date_default_timezone_set('Asia/Shanghai');
 
 define('RUN_TIME_PATH',__DIR__.'/runtime');
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use Swoole\Runtime;
 use easydowork\crontab\HttpServer;
@@ -25,7 +25,7 @@ switch ($command){
         stop();
         break;
     default:
-        print_error("use `php {$argv[0]} start|start -d|stop `");
+        print_error("use `php {$argv[0]} start|start -d|stop`");
         exit();
         break;
 }

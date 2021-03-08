@@ -9,6 +9,7 @@ use Swoole\Http\Request;
  * @package easydowork\crontab
  * @property Request $request
  * @property Response $response
+ * @property array $postData
  */
 abstract class Controller
 {
@@ -24,6 +25,11 @@ abstract class Controller
     public $response;
 
     /**
+     * @var array
+     */
+    public $postData;
+
+    /**
      * Controller constructor.
      * @param Request $request
      * @param Response $response
@@ -32,6 +38,7 @@ abstract class Controller
     {
         $this->request = $request;
         $this->response = $response;
+        $this->postData = json_decode($request->rawContent(),1);
         $this->init();
     }
 

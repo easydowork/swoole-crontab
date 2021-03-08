@@ -29,8 +29,8 @@ class JobController extends Controller
      */
     public function find(): array
     {
-        $id = (string)($this->request->post['id'] ?? 0);
-        if (!empty($data = $this->jobTable->get($id))) {
+        $id = (string)($this->request->post['id'] ?? null);
+        if ($id && !empty($data = $this->jobTable->get($id))) {
             return $this->success($data);
         }
         return $this->error('定时任务('.$id.'):不存在.');
@@ -42,7 +42,7 @@ class JobController extends Controller
      */
     public function create(): array
     {
-        $data = $this->request->post;
+        $data = $this->postData;
 
         $res = $this->jobTable->checkData($data);
 
@@ -79,8 +79,8 @@ class JobController extends Controller
      */
     public function delete(): array
     {
-        $id = (string)($this->request->post['id'] ?? 0);
-        if ($this->jobTable->del($id)) {
+        $id = (string)($this->request->post['id'] ?? null);
+        if ($id && $this->jobTable->del($id)) {
             return $this->success();
         }
         return $this->error();
@@ -103,8 +103,8 @@ class JobController extends Controller
      */
     public function start(): array
     {
-        $id = (string)($this->request->post['id'] ?? 0);
-        if(!empty($data = $this->jobTable->get($id))){
+        $id = (string)($this->request->post['id'] ?? null);
+        if($id && !empty($data = $this->jobTable->get($id))){
             if($data['status'] || $this->jobTable->start($id,$data)){
                 return $this->success();
             }
@@ -118,8 +118,8 @@ class JobController extends Controller
      */
     public function stop(): array
     {
-        $id = (string)($this->request->post['id'] ?? 0);
-        if(!empty($data = $this->jobTable->get($id))){
+        $id = (string)($this->request->post['id'] ?? null);
+        if($id && !empty($data = $this->jobTable->get($id))){
             if(!$data['status'] || $this->jobTable->stop($id,$data)){
                 return $this->success();
             }
