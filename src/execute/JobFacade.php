@@ -38,8 +38,15 @@ class JobFacade
 
         //判断任务执行文件
         $executeClass = Config::getInstance()->jobConfig['run_types'][$data['run_type']]??'';
-        if(empty($executeClass) || !($executeClass instanceof JobExecute))
+        if(empty($executeClass)){
             return;
+        }
+
+        /** @var $jobExecute JobExecute */
+        $jobExecute = new $executeClass();
+        if(!($jobExecute instanceof JobExecute)){
+            return;
+        }
 
         //获取1分钟内执行的时间戳
         try {
@@ -61,17 +68,14 @@ class JobFacade
             }
 
             //加入定时任务
-            Timer::after($t*1000,function () use($executeClass,$key){
+            Timer::after($t*1000,function () use($jobExecute,$key){
                 try{
                     /* @var $data array */
                     $data = JobTable::getInstance()->get($key);
                     if(empty($data) || empty($data['status'])){
                         return;
                     }
-
-                    /** @var $execute JobExecute */
-                    $execute = new $executeClass();
-                    if($execute->run($data) === false){
+                    if($jobExecute->run($data) === false){
                         Logger::getInstance()->error('执行定时任务['.$data['name'].'],返回结果失败.');
                     }else{
                         Logger::getInstance()->info('执行定时任务['.$data['name'].'],返回结果成功.');

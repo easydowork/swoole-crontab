@@ -155,13 +155,17 @@ class JobTable
 
         $runTypes = Config::getInstance()->jobConfig['run_types'];
         $executeClass = $runTypes[$data['run_type']]??null;
-        if(empty($executeClass) || !($executeClass instanceof JobExecute)){
-            return '任务类型错误,必须为:'.implode(',',$runTypes).'其中之一.';
+        if(empty($executeClass)){
+            return '任务类型错误.';
         }
-        if($executeClass::validate($data['command'])){
+        /** @var $jobExecute JobExecute */
+        $jobExecute = new $executeClass();
+        if(!($jobExecute instanceof JobExecute)){
+            return '任务类型错误.';
+        }
+        if(!$executeClass::validate($data['command'])){
             return "类型为{$data['run_type']}时,command格式错误.";
         }
-
 
         if(!FormatParser::getInstance()->isValid($data['format']??'')){
             return 'crontab格式错误.';
