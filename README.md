@@ -14,7 +14,7 @@
 ```sh
 php Crontab start #调试模式
 php Crontab start -d #常驻内存模式
-php Crontab sttop #关闭常驻内存服务
+php Crontab stop #关闭常驻内存服务
 ```
 ## 请求说明
 * 运行后默认请求地址为: `baseUrl`(`http://ip:9501/`),请求响应格式统一为`json`
