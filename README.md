@@ -31,7 +31,7 @@ php Crontab sttop #关闭常驻内存服务
         "run_type": "url",  // 运行方式内置url和shell两种方式
         "command": "http://192.168.1.102"
     }
-    ##注释:shell运行方式必须配置白名单文件路径`shell_whitelist_file`,内容为可执行的`sh`文件,保证服务器安全,详见`ShellJobExecute`文件
+    ##注释:shell运行方式必须配置白名单文件路径`shell_whitelist_file`,内容为可执行的`sh`脚本的绝对路径,保证服务器安全,详见`ShellJobExecute`文件
     //返回字段
     {
         "code": 0,
