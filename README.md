@@ -6,7 +6,7 @@
 * 详见 `composer.json` `require`
 
 ## 运行说明 
-* 启动`server`时,添加用户进程`Process`加载`data_file`配置文件到`Swool\Table`中,`worker`进程接收请求,用户进程每分钟扫描一次`data_file`配置文件解析定时任务.创建|删除|更新|启动|关闭定时任务请求会实时更新`data_file`配置文件内容,并且修改`Swool\Table`内容.
+* 启动`server`时,添加用户进程`Process`加载`data_file`配置文件到`Swool\Table`中,`worker`进程接收请求,用户进程每分钟扫描一次`Swool\Table`解析定时任务.创建|删除|启动|关闭定时任务请求会实时更新`data_file`配置文件内容,并且修改`Swool\Table`内容.
 * 默认`Swool\Table`大小为1024行,最多添加1024个定时任务.
 * 复制项目根目录`test`文件中`Crontab.php`
 * 服务启动默认配置为项目下`Config.php`
