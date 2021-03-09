@@ -159,10 +159,12 @@ class JobTable
             }
         }
 
-        if(empty($data['command']))
+        $command = trim($data['command']);
+
+        if(empty($command))
             return '任务命令不能为空.';
 
-        if(strlen($data['command']) > $this->_table->size)
+        if(strlen($command) > $this->_table->size)
             return '任务命令不能大于'.$this->_table->size.'个字符.';
 
         if(empty($data['run_type']))
@@ -173,13 +175,15 @@ class JobTable
         if(empty($executeClass)){
             return '任务类型错误.';
         }
+
         /** @var $jobExecute JobExecute */
         $jobExecute = new $executeClass();
         if(!($jobExecute instanceof JobExecute)){
-            return '任务类型错误.';
+            return '任务执行文件必须继承 JobExecute 类.';
         }
-        if(!$executeClass::validate($data['command'])){
-            return "类型为{$data['run_type']}时,command格式错误.";
+
+        if(!$executeClass::validate($command)){
+            return "类型为{$data['run_type']}时,command格式校验失败.";
         }
 
         if(!FormatParser::getInstance()->isValid($data['format']??'')){

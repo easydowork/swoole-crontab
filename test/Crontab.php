@@ -32,8 +32,9 @@ switch ($command){
 
 /**
  * run
+ * @param bool $daemonize
  */
-function run($daemonize=false)
+function run(bool $daemonize=false)
 {
     Runtime::enableCoroutine(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
 

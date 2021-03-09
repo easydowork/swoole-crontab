@@ -28,6 +28,10 @@ class Config
 
     public $sock_type = SWOOLE_SOCK_TCP;
 
+    /**
+     * HttpServe配置
+     * @var array
+     */
     public $settings = [
         'max_request' => 1000,
         'daemonize' => false,
@@ -36,6 +40,7 @@ class Config
     ];
 
     /**
+     * 请求路由
      * @var array
      */
     public $routes = [
@@ -49,14 +54,20 @@ class Config
     ];
 
     /**
+     * 定时任务配置
      * @var array
      */
     public $jobConfig = [
+        //运行方式
         'run_types' => [
-            'url' => UrlJobExecute::class,
-            'shell' => ShellJobExecute::class,
+            'url' => UrlJobExecute::class,//curl执行类
+            'shell' => ShellJobExecute::class,//shell执行类
         ],
+        //shell安全模式 默认为空或者文件路径 非白名单里的命令不允许执行
+        'shell_whitelist_file' => null,
+        //任务条数
         'table_size' => 1024,
+        //存储定时任务到配置文件中
         'data_file' => null
     ];
 
@@ -93,6 +104,15 @@ class Config
         try {
             if(empty($this->settings['worker_num'])){
                 $this->settings['worker_num'] = swoole_cpu_num()*2;
+            }
+
+            if(!empty($this->jobConfig['shell_whitelist_file'])){
+                if(!is_file($this->jobConfig['shell_whitelist_file'])){
+                    throw new ConfigException('shell_whitelist_file is not file.');
+                }
+                if(!is_readable($this->jobConfig['shell_whitelist_file'])){
+                    throw new ConfigException('shell_whitelist_file is not readable.');
+                }
             }
 
             if(empty($this->jobConfig['data_file'])){
