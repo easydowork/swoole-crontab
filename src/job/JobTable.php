@@ -69,23 +69,25 @@ class JobTable
      * set
      * @param $key
      * @param array $data
+     * @param bool $saveFile
      * @return bool
      */
-    public function set($key,$data=[])
+    public function set($key,$data=[],$saveFile=true)
     {
         if($this->_table->set($key,$data)){
-            return $this->saveToFile();
+            return $saveFile?$this->saveToFile():true;
         }
         return false;
     }
 
     /**
      * saveToFile
-     * @return false|int
+     * @return bool
      */
     protected function saveToFile()
     {
-        return @file_put_contents(Config::getInstance()->jobConfig['data_file'],serialize($this->each()));
+        echo '<pre>';print_r(1);exit;
+        return file_put_contents(Config::getInstance()->jobConfig['data_file'],serialize($this->each()));
     }
 
     /**

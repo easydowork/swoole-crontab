@@ -47,7 +47,7 @@ class JobProcess
             $data = @unserialize(@file_get_contents($jobDataFile));
             if(!empty($data)){
                 foreach ($data as $key => $value){
-                    $jobTable->set($key,$value);
+                    $jobTable->set($key,$value,false);
                 }
             }
         }catch (\Exception $e){
