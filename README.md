@@ -23,7 +23,7 @@ php Crontab sttop #关闭常驻内存服务
     ```json
     //请求字段
     {
-        "name": "url",    /* 任务名称 */
+        "name": "url",    // 任务名称
         "start_time": 0,  // 开始时间默认0解析format格式直接运行
         "stop_time": 0,   // 结束时间默认0一直运行
         "format": "* * * * * *",  // 执行时间格式参见Crontab基本格式再加上一个秒

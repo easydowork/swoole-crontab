@@ -51,7 +51,7 @@ class Logger
             return;
         }
 
-        $prefix = date('Ym');
+        $prefix = date('Ymd');
         $date = date('Y-m-d H:i:s');
         $levelStr = $this->levelMap($logLevel);
         $filePath = $this->logPath."/log_{$prefix}.log";
