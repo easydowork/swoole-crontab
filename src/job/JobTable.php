@@ -86,7 +86,6 @@ class JobTable
      */
     protected function saveToFile()
     {
-        echo '<pre>';print_r(1);exit;
         return file_put_contents(Config::getInstance()->jobConfig['data_file'],serialize($this->each()));
     }
 
