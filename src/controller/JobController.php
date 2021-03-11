@@ -29,7 +29,7 @@ class JobController extends Controller
      */
     public function find(): array
     {
-        $id = (string)($this->request->post['id'] ?? null);
+        $id = (string)($this->postData['id'] ?? null);
         if ($id && !empty($data = $this->jobTable->get($id))) {
             return $this->success($data);
         }
@@ -76,7 +76,7 @@ class JobController extends Controller
      */
     public function delete(): array
     {
-        $id = (string)($this->request->post['id'] ?? null);
+        $id = (string)($this->postData['id'] ?? null);
         if ($id && $this->jobTable->del($id)) {
             return $this->success();
         }
@@ -100,7 +100,7 @@ class JobController extends Controller
      */
     public function start(): array
     {
-        $id = (string)($this->request->post['id'] ?? null);
+        $id = (string)($this->postData['id'] ?? null);
         if($id && !empty($data = $this->jobTable->get($id))){
             if($data['status'] || $this->jobTable->start($id,$data)){
                 return $this->success();
@@ -115,7 +115,7 @@ class JobController extends Controller
      */
     public function stop(): array
     {
-        $id = (string)($this->request->post['id'] ?? null);
+        $id = (string)($this->postData['id'] ?? null);
         if($id && !empty($data = $this->jobTable->get($id))){
             if(!$data['status'] || $this->jobTable->stop($id,$data)){
                 return $this->success();
