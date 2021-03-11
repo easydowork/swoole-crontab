@@ -155,7 +155,7 @@ class JobTable
         }
 
         if(!empty($data['stop_time'])){
-            if(strtotime(date('m-d-Y H:i:s',$data['stop_time'])) !== $data['start_time']) {
+            if(strtotime(date('m-d-Y H:i:s',$data['stop_time'])) !== $data['stop_time']) {
                 return '结束时间必须是时间戳或不设置.';
             }
         }
