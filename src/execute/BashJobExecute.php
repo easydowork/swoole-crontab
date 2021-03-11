@@ -7,10 +7,10 @@ use easydowork\crontab\Config;
 use Swoole\Coroutine\System;
 
 /**
- * Class ShellJobExecute
+ * Class BashJobExecute
  * @package easydowork\crontab\execute
  */
-class ShellJobExecute extends JobExecute
+class BashJobExecute extends JobExecute
 {
 
     /**
@@ -31,19 +31,19 @@ class ShellJobExecute extends JobExecute
      */
     public static function validate(string $command):bool
     {
-        $shellWhitelistFile = Config::getInstance()->jobConfig['shell_whitelist_file'];
+        $bashWhitelistFile = Config::getInstance()->jobConfig['bash_whitelist_file'];
 
-        if(empty($shellWhitelistFile)){
+        if(empty($bashWhitelistFile)){
             return false;
         }
 
-        $content = file_get_contents($shellWhitelistFile);
+        $content = file_get_contents($bashWhitelistFile);
 
-        if(empty($shellWhitelist = explode("\n",$content))){
+        if(empty($bashWhitelist = explode("\n",$content))){
             return  false;
         }
 
-        if(!in_array($command,$shellWhitelist,1)){
+        if(!in_array($command,$bashWhitelist,1)){
             return false;
         }
 

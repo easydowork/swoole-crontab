@@ -33,7 +33,7 @@ class JobTable
         $this->_table->column('stop_time', Table::TYPE_INT,8);  //停止执行时间
         $this->_table->column('format', Table::TYPE_STRING,30); //crontab格式 加秒
         $this->_table->column('run_type', Table::TYPE_STRING,10);  //运行类型
-        $this->_table->column('command', Table::TYPE_STRING,$size);  //执行任务 判断是url还是shell名称
+        $this->_table->column('command', Table::TYPE_STRING,$size);  //执行任务
         $this->_table->column('status', Table::TYPE_INT,1);  //状态 1正常 0关闭
         $this->_table->create();
     }

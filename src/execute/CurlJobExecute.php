@@ -3,10 +3,10 @@
 namespace easydowork\crontab\execute;
 
 /**
- * Class UrlJobExecute
+ * Class CurlJobExecute
  * @package easydowork\crontab\execute
  */
-class UrlJobExecute extends JobExecute
+class CurlJobExecute extends JobExecute
 {
 
     /**

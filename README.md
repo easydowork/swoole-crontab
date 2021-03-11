@@ -28,10 +28,10 @@ php Crontab stop #关闭常驻内存服务
         "start_time": 0,  // 开始时间默认0解析format格式直接运行
         "stop_time": 0,   // 结束时间默认0一直运行
         "format": "* * * * * *",  // 执行时间格式参见Crontab基本格式再加上一个秒
-        "run_type": "url",  // 运行方式内置url和shell两种方式
+        "run_type": "Curl",  // 运行方式内置Curl和Bash两种方式
         "command": "http://192.168.1.102"
     }
-    ##注释:shell运行方式必须配置白名单文件路径`shell_whitelist_file`,内容为可执行的`sh`脚本的绝对路径,保证服务器安全,详见`ShellJobExecute`文件
+    ##注释:bash运行方式必须配置白名单文件路径`bash_whitelist_file`,内容为可执行的`sh`脚本的绝对路径,保证服务器安全,详见`BashJobExecute`文件
     //返回字段
     {
         "code": 0,
@@ -49,11 +49,11 @@ php Crontab stop #关闭常驻内存服务
             "data": {
                 "job_list": {
                     "604582ba74e34": {
-                        "name": "url",
+                        "name": "Curl",
                         "start_time": 0,
                         "stop_time": 0,
                         "format": "* * * * * *",
-                        "run_type": "url",
+                        "run_type": "Curl",
                         "command": "http://192.168.1.102",
                         "status": 1
                     }

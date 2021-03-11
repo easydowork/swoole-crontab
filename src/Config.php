@@ -4,8 +4,8 @@ namespace easydowork\crontab;
 use easydowork\crontab\base\ConfigException;
 use easydowork\crontab\base\Instance;
 use easydowork\crontab\controller\JobController;
-use easydowork\crontab\execute\ShellJobExecute;
-use easydowork\crontab\execute\UrlJobExecute;
+use easydowork\crontab\execute\BashJobExecute;
+use easydowork\crontab\execute\CurlJobExecute;
 
 /**
  * Class Config
@@ -60,11 +60,11 @@ class Config
     public $jobConfig = [
         //运行方式
         'run_types' => [
-            'url' => UrlJobExecute::class,//curl执行类
-            'shell' => ShellJobExecute::class,//shell执行类
+            'Curl' => CurlJobExecute::class,//Curl执行类
+            'Bash' => BashJobExecute::class,//Bash执行类
         ],
-        //shell安全模式 默认为空或者文件路径 非白名单里的命令不允许执行
-        'shell_whitelist_file' => null,
+        //bash安全模式 默认为空或者文件路径 非白名单里的命令不允许执行
+        'bash_whitelist_file' => null,
         //任务条数
         'table_size' => 1024,
         //存储定时任务到配置文件中
@@ -106,12 +106,12 @@ class Config
                 $this->settings['worker_num'] = swoole_cpu_num()*2;
             }
 
-            if(!empty($this->jobConfig['shell_whitelist_file'])){
-                if(!is_file($this->jobConfig['shell_whitelist_file'])){
-                    throw new ConfigException('shell_whitelist_file is not file.');
+            if(!empty($this->jobConfig['bash_whitelist_file'])){
+                if(!is_file($this->jobConfig['bash_whitelist_file'])){
+                    throw new ConfigException('bash_whitelist_file is not file.');
                 }
-                if(!is_readable($this->jobConfig['shell_whitelist_file'])){
-                    throw new ConfigException('shell_whitelist_file is not readable.');
+                if(!is_readable($this->jobConfig['bash_whitelist_file'])){
+                    throw new ConfigException('bash_whitelist_file is not readable.');
                 }
             }
 
