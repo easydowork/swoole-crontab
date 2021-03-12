@@ -27,7 +27,7 @@ class JobFacade
         }
 
         //判断执行开始时间
-        if($data['start_time'] && $data['start_time'] < time()){
+        if($data['start_time'] && $data['start_time'] > time()){
             return;
         }
 
