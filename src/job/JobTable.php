@@ -149,13 +149,13 @@ class JobTable
             return '任务名称不能大于20个字符.';
 
         if(!empty($data['start_time'])){
-            if(strtotime(date('m-d-Y H:i:s',$data['start_time'])) !== $data['start_time']) {
+            if(strtotime(date('Y-m-d H:i:s',$data['start_time'])) !== $data['start_time']) {
                 return '开始时间必须是时间戳或不设置.';
             }
         }
 
         if(!empty($data['stop_time'])){
-            if(strtotime(date('m-d-Y H:i:s',$data['stop_time'])) !== $data['stop_time']) {
+            if(strtotime(date('Y-m-d H:i:s',$data['stop_time'])) !== $data['stop_time']) {
                 return '结束时间必须是时间戳或不设置.';
             }
         }
