@@ -21,6 +21,8 @@ class Logger
 
     private $logConsole = true;
 
+    private $fileName = null;
+
     /**
      * Logger constructor.
      */
@@ -40,6 +42,17 @@ class Logger
     }
 
     /**
+     * setFileName
+     * @param string $fileName
+     * @return $this
+     */
+    public function setFileName(string $fileName)
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+    /**
      * log
      * @param string|null $msg
      * @param int $logLevel
@@ -54,7 +67,12 @@ class Logger
         $prefix = date('Ymd');
         $date = date('Y-m-d H:i:s');
         $levelStr = $this->levelMap($logLevel);
-        $filePath = $this->logPath."/log_{$prefix}.log";
+
+        if(empty($this->fileName)){
+            $this->fileName = "{$prefix}.log";
+        }
+
+        $filePath = $this->logPath.DIRECTORY_SEPARATOR.$this->fileName;
         $str = "[{$date}][{$category}][{$levelStr}]:{$msg}\n";
         file_put_contents($filePath,"{$str}",FILE_APPEND|LOCK_EX);
     }

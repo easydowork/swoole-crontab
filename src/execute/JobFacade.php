@@ -58,7 +58,7 @@ class JobFacade
         }catch (\Exception $e){
             $data['status'] = 0;
             JobTable::getInstance()->set($key,$data);
-            Logger::getInstance()->info('执行定时任务['.$data['name'].'],解析[format]失败.');
+            Logger::getInstance()->setFileName($key)->info('执行定时任务['.$data['name'].'],解析[format]失败.');
             return;
         }
 
@@ -79,12 +79,12 @@ class JobFacade
                         return;
                     }
                     if($jobExecute->run($data) === false){
-                        Logger::getInstance()->error('执行定时任务['.$data['name'].'],返回结果失败.');
+                        Logger::getInstance()->setFileName($key)->error('执行定时任务['.$data['name'].'],返回结果失败.');
                     }else{
-                        Logger::getInstance()->info('执行定时任务['.$data['name'].'],返回结果成功.');
+                        Logger::getInstance()->setFileName($key)->info('执行定时任务['.$data['name'].'],返回结果成功.');
                     }
                 }catch (\Exception $e){
-                    Logger::getInstance()->error('执行定时任务['.$data['name'].'],异常:'.$e->getMessage());
+                    Logger::getInstance()->setFileName($key)->error('执行定时任务['.$data['name'].'],异常:'.$e->getMessage());
                 }
             });
         }
